@@ -13,7 +13,7 @@ int totalProductos = 0;
 
 
 void cargarInventario() {
-    ifstream archivo("inventario.txt");
+    ifstream archivo("/data/inventario.txt");
     if(!archivo.is_open()) {
         cout << "Ha habido un error, no se encuentra el archivo de texto" << endl;
         return;
@@ -65,8 +65,9 @@ void mostrarMenu() {
     cout << "3. Actualizar inventario por ubicación" << endl;
     cout << "4. Registrar nuevo producto" << endl;
     cout << "5. Generar reporte completo" << endl;
-    cout << "6. Encontrar el producto más caro" << endl;
-    cout << "7. Salir" << endl;
+    cout << "6. Generar reporte de bajo stock" << endl;
+    cout << "7. Encontrar el producto más caro" << endl;
+    cout << "8. Salir" << endl;
     cout << "\nOpción seleccionada: ";
 }
 
@@ -110,6 +111,26 @@ void generarReporte() {
     }
     cout << "-------------------------------------------------" << endl;
     cout << "--- Fin del reporte ---" << endl;
+}
+
+void generarReporteBajoStock() {
+    int umbral = 10;
+    cout << "\n--- Reporte de Productos con Bajo Stock ---" << endl;
+    cout << "Productos con menos de " << umbral << " unidades:" << endl;
+    cout << "-------------------------------------------------" << endl;
+    
+    bool hayProductosBajoStock = false;
+    for(int i = 0; i < totalProductos; i++) {
+        if(stock[i] < umbral) {
+            cout << "Nombre: " << nombres[i] << ", Stock: " << stock[i] << endl;
+            hayProductosBajoStock = true;
+        }
+    }
+    
+    if(!hayProductosBajoStock) {
+        cout << "No hay productos con bajo stock." << endl;
+    }
+    cout << "-------------------------------------------------" << endl;
 }
 
 void encontrarMasCaro() {
@@ -202,7 +223,7 @@ void registrarNuevoProducto() {
     }
     
     if(codigoExiste) {
-        cout << "Ya existe un producto con ese código, por favor ingrese otro" << endl;
+        cout << "Error: Ya existe un producto con ese código." << endl;
         return;
     }
     
@@ -228,19 +249,6 @@ void registrarNuevoProducto() {
     
     cout << "Ingrese la ubicación en almacén: ";
     cin >> ubicaciones[totalProductos];
-
-    bool ubicacionExiste = false;
-    for(int i = 0; i < totalProductos; i++) {
-        if(ubicaciones[i] == ubicaciones[totalProductos]) {
-            ubicacionExiste = true;
-            break;
-        }
-    }
-    
-    if(ubicacionExiste) {
-        cout << "Ya existe una un producto en esa ubicación, por favor registre y ubique el producto en otro sitio para evitar duplicados" << endl;
-        return;
-    }
     
     codigos[totalProductos] = nuevoCodigo;
     totalProductos++;
@@ -276,9 +284,12 @@ int main() {
                 generarReporte();
                 break;
             case 6:
-                encontrarMasCaro();
+                generarReporteBajoStock();
                 break;
             case 7:
+                encontrarMasCaro();
+                break;
+            case 8:
                 guardarInventario();
                 cout << "Cerrando sesión.. " << endl;
                 return 0;
