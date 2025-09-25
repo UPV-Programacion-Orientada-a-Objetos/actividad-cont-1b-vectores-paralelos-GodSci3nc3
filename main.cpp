@@ -76,6 +76,33 @@ void encontrarMasCaro() {
          << " con un precio de $" << precioMayor << endl;
 }
 
+void actualizarInventario () {
+    int codigoActualizar, nuevaCantidad;
+    cout << "\nIngrese el código del producto a actualizar: ";
+    cin >> codigoActualizar;
+    
+    bool encontrado = false;
+    for(int i = 0; i < totalProductos; i++) {
+        if(codigos[i] == codigoActualizar) {
+            cout << "Producto encontrado: " << nombres[i] << endl;
+            cout << "Cantidad actual en stock: " << stock[i] << endl;
+            cout << "Ingrese la nueva cantidad en stock: ";
+            cin >> nuevaCantidad;
+            if(nuevaCantidad >= 0) {
+                stock[i] = nuevaCantidad;
+                cout << "Stock actualizado correctamente." << endl;
+            } else {
+                cout << "La cantidad no puede ser negativa." << endl;
+            }
+            encontrado = true;
+            break;
+        }
+    }
+    if(!encontrado) {
+        cout << "No se ha encontrado el producto" << endl;
+    }
+}
+
 int main() {
     int opcion;
     
@@ -90,7 +117,7 @@ int main() {
                 consultarProducto();
                 break;
             case 2:
-                cout << "Función en desarrollo..." << endl;
+                actualizarInventario();
                 break;
             case 3:
                 generarReporte();
