@@ -202,7 +202,7 @@ void registrarNuevoProducto() {
     }
     
     if(codigoExiste) {
-        cout << "Error: Ya existe un producto con ese código." << endl;
+        cout << "Ya existe un producto con ese código, por favor ingrese otro" << endl;
         return;
     }
     
@@ -228,6 +228,19 @@ void registrarNuevoProducto() {
     
     cout << "Ingrese la ubicación en almacén: ";
     cin >> ubicaciones[totalProductos];
+
+    bool ubicacionExiste = false;
+    for(int i = 0; i < totalProductos; i++) {
+        if(ubicaciones[i] == ubicaciones[totalProductos]) {
+            ubicacionExiste = true;
+            break;
+        }
+    }
+    
+    if(ubicacionExiste) {
+        cout << "Ya existe una un producto en esa ubicación, por favor registre y ubique el producto en otro sitio para evitar duplicados" << endl;
+        return;
+    }
     
     codigos[totalProductos] = nuevoCodigo;
     totalProductos++;
