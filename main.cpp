@@ -4,13 +4,12 @@
 
 using namespace std;
 
-int codigos[100] = {101, 102, 103, 104, 105};
-string nombres[100] = {"Martillo de bola", "Destornillador", "Cinta métrica", "Llave inglesa", "Taladro inalámbrico"};
-int stock[100] = {50, 120, 75, 45, 10};
-float precios[100] = {15.50, 8.75, 20.00, 25.99, 120.00};
-
-string ubicaciones[100] = {};
-int totalProductos = 5;
+int codigos[100];
+string nombres[100];
+int stock[100];
+float precios[100];
+string ubicaciones[100];
+int totalProductos = 0;
 
 
 void cargarInventario() {
@@ -39,15 +38,17 @@ void cargarInventario() {
         }
     }
     archivo.close();
-    cout << "Inventario cargado éxitosamente" << totalProductos << " productos en el inventario" << endl;
+    cout << "Inventario cargado éxitosamente, hay" << totalProductos << " productos en el inventario" << endl;
 }
 
 void guardarInventario () {
     ofstream archivo("inventario.txt");
     if(!archivo.is_open()) {
-        cout << "No se ha podido guardar el archivo de texto" << endl;
+        cout << "No se ha podido guardar lo registrado nuevo" << endl;
         return;
     }
+    
+    archivo << "Código,Nombre,Cantidad,Precio,Ubicación" << endl;
     
     for(int i = 0; i < totalProductos; i++) {
         archivo << codigos[i] << "," << nombres[i] << "," << stock[i] << "," << precios[i] << "," << ubicaciones[i] << endl;
@@ -60,10 +61,12 @@ void guardarInventario () {
 void mostrarMenu() {
     cout << "\nSeleccione una opción:" << endl;
     cout << "1. Consultar un producto" << endl;
-    cout << "2. Actualizar inventario" << endl;
-    cout << "3. Generar reporte completo" << endl;
-    cout << "4. Encontrar el producto más caro" << endl;
-    cout << "5. Salir" << endl;
+    cout << "2. Actualizar inventario por código" << endl;
+    cout << "3. Actualizar inventario por ubicación" << endl;
+    cout << "4. Registrar nuevo producto" << endl;
+    cout << "5. Generar reporte completo" << endl;
+    cout << "6. Encontrar el producto más caro" << endl;
+    cout << "7. Salir" << endl;
     cout << "\nOpción seleccionada: ";
 }
 
@@ -90,7 +93,7 @@ void consultarProducto() {
 }
 
 void generarReporte() {
-    cout << "\n--- Reporte de Inventario ---" << endl;
+    cout << "\n--- Reporte del inventario ---" << endl;
     cout << "Código    | Nombre             | Stock | Precio" << endl;
     cout << "-------------------------------------------------" << endl;
     
@@ -106,7 +109,7 @@ void generarReporte() {
         cout << " | $" << precios[i] << endl;
     }
     cout << "-------------------------------------------------" << endl;
-    cout << "--- Fin del Reporte ---" << endl;
+    cout << "--- Fin del reporte ---" << endl;
 }
 
 void encontrarMasCaro() {
@@ -151,11 +154,92 @@ void actualizarInventario () {
     }
 }
 
+void actualizarPorUbicacion() {
+    string ubicacionBuscar;
+    int nuevaCantidad;
+    cout << "\nIngrese la ubicación del producto a actualizar: ";
+    cin >> ubicacionBuscar;
+    
+    bool encontrado = false;
+    for(int i = 0; i < totalProductos; i++) {
+        if(ubicaciones[i] == ubicacionBuscar) {
+            cout << "Producto encontrado: " << nombres[i] << endl;
+            cout << "Ubicación: " << ubicaciones[i] << endl;
+            cout << "Cantidad actual en stock: " << stock[i] << endl;
+            cout << "Ingrese la nueva cantidad en stock: ";
+            cin >> nuevaCantidad;
+            if(nuevaCantidad >= 0) {
+                stock[i] = nuevaCantidad;
+                cout << "Stock actualizado correctamente." << endl;
+            } else {
+                cout << "La cantidad no puede ser negativa." << endl;
+            }
+            encontrado = true;
+            break;
+        }
+    }
+    if(!encontrado) {
+        cout << "No se encontró ningún producto en esa ubicación" << endl;
+    }
+}
+
+void registrarNuevoProducto() {
+    if(totalProductos >= 100) {
+        cout << "No se pueden agregar más productos. Inventario lleno." << endl;
+        return;
+    }
+    
+    int nuevoCodigo;
+    cout << "\nIngrese el código del nuevo producto: ";
+    cin >> nuevoCodigo;
+    
+    bool codigoExiste = false;
+    for(int i = 0; i < totalProductos; i++) {
+        if(codigos[i] == nuevoCodigo) {
+            codigoExiste = true;
+            break;
+        }
+    }
+    
+    if(codigoExiste) {
+        cout << "Error: Ya existe un producto con ese código." << endl;
+        return;
+    }
+    
+    cout << "Ingrese el nombre del producto: ";
+    cin.ignore();
+    getline(cin, nombres[totalProductos]);
+    
+    cout << "Ingrese la cantidad en stock: ";
+    cin >> stock[totalProductos];
+    
+    if(stock[totalProductos] < 0) {
+        cout << "Error: La cantidad no puede ser negativa." << endl;
+        return;
+    }
+    
+    cout << "Ingrese el precio unitario: ";
+    cin >> precios[totalProductos];
+    
+    if(precios[totalProductos] < 0) {
+        cout << "Error: El precio no puede ser negativo." << endl;
+        return;
+    }
+    
+    cout << "Ingrese la ubicación en almacén: ";
+    cin >> ubicaciones[totalProductos];
+    
+    codigos[totalProductos] = nuevoCodigo;
+    totalProductos++;
+    
+    cout << "Producto registrado exitosamente." << endl;
+}
+
 int main() {
     int opcion;
     
     cout << "--- Bienvenido al sistema de inventario de \"El Martillo\" ---" << endl;
-    cout << "\nCargando inventario desde 'inventario.txt'..." << endl;
+    cout << "\nCargando inventario.. " << endl;
     cargarInventario();
     
     while(true) {
@@ -170,17 +254,23 @@ int main() {
                 actualizarInventario();
                 break;
             case 3:
-                generarReporte();
+                actualizarPorUbicacion();
                 break;
             case 4:
-                encontrarMasCaro();
+                registrarNuevoProducto();
                 break;
             case 5:
+                generarReporte();
+                break;
+            case 6:
+                encontrarMasCaro();
+                break;
+            case 7:
                 guardarInventario();
                 cout << "Cerrando sesión.. " << endl;
                 return 0;
             default:
-                cout << "Ingrese otra opción" << endl;
+                cout << "Ingrese otra opción que sí sea válida" << endl;
         }
     }
     
