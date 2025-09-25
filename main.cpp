@@ -13,7 +13,7 @@ int totalProductos = 0;
 
 
 void cargarInventario() {
-    ifstream archivo("/data/inventario.txt");
+    ifstream archivo("./data/inventario.txt");
     if(!archivo.is_open()) {
         cout << "Ha habido un error, no se encuentra el archivo de texto" << endl;
         return;
@@ -42,7 +42,7 @@ void cargarInventario() {
 }
 
 void guardarInventario () {
-    ofstream archivo("/data/inventario.txt");
+    ofstream archivo("./data/inventario.txt");
     if(!archivo.is_open()) {
         cout << "No se ha podido guardar lo registrado nuevo" << endl;
         return;
