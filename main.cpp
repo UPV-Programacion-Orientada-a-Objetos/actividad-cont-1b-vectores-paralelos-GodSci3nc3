@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -7,7 +8,54 @@ int codigos[100] = {101, 102, 103, 104, 105};
 string nombres[100] = {"Martillo de bola", "Destornillador", "Cinta métrica", "Llave inglesa", "Taladro inalámbrico"};
 int stock[100] = {50, 120, 75, 45, 10};
 float precios[100] = {15.50, 8.75, 20.00, 25.99, 120.00};
+
+string ubicaciones[100] = {};
 int totalProductos = 5;
+
+
+void cargarInventario() {
+    ifstream archivo("inventario.txt");
+    if(!archivo.is_open()) {
+        cout << "Ha habido un error, no se encuentra el archivo de texto" << endl;
+        return;
+    }
+    
+    totalProductos = 0;
+    string linea;
+    getline(archivo, linea);
+    while(getline(archivo, linea) && totalProductos < 100) {
+        int comaCodigo = linea.find(',');
+        int comaNombre = linea.find(',', comaCodigo + 1);
+        int comaStock = linea.find(',', comaNombre + 1);
+        int comaPrecio = linea.find(',', comaStock + 1);
+        
+        if(comaCodigo != string::npos && comaNombre != string::npos && comaStock != string::npos && comaPrecio != string::npos) {
+            codigos[totalProductos] = stoi(linea.substr(0, comaCodigo));
+            nombres[totalProductos] = linea.substr(comaCodigo + 1, comaNombre - comaCodigo - 1);
+            stock[totalProductos] = stoi(linea.substr(comaNombre + 1, comaStock - comaNombre - 1));
+            precios[totalProductos] = stof(linea.substr(comaStock + 1, comaPrecio - comaStock - 1));
+            ubicaciones[totalProductos] = linea.substr(comaPrecio + 1);
+            totalProductos++;
+        }
+    }
+    archivo.close();
+    cout << "Inventario cargado éxitosamente" << totalProductos << " productos en el inventario" << endl;
+}
+
+void guardarInventario () {
+    ofstream archivo("inventario.txt");
+    if(!archivo.is_open()) {
+        cout << "No se ha podido guardar el archivo de texto" << endl;
+        return;
+    }
+    
+    for(int i = 0; i < totalProductos; i++) {
+        archivo << codigos[i] << "," << nombres[i] << "," << stock[i] << "," << precios[i] << "," << ubicaciones[i] << endl;
+    }
+    archivo.close();
+    cout << "Datos guardados en el inventario" << endl;
+}
+
 
 void mostrarMenu() {
     cout << "\nSeleccione una opción:" << endl;
@@ -107,6 +155,8 @@ int main() {
     int opcion;
     
     cout << "--- Bienvenido al sistema de inventario de \"El Martillo\" ---" << endl;
+    cout << "\nCargando inventario desde 'inventario.txt'..." << endl;
+    cargarInventario();
     
     while(true) {
         mostrarMenu();
@@ -126,6 +176,7 @@ int main() {
                 encontrarMasCaro();
                 break;
             case 5:
+                guardarInventario();
                 cout << "Cerrando sesión.. " << endl;
                 return 0;
             default:
