@@ -42,7 +42,7 @@ void cargarInventario() {
 }
 
 void guardarInventario () {
-    ofstream archivo("inventario.txt");
+    ofstream archivo("/data/inventario.txt");
     if(!archivo.is_open()) {
         cout << "No se ha podido guardar lo registrado nuevo" << endl;
         return;
@@ -67,7 +67,8 @@ void mostrarMenu() {
     cout << "5. Generar reporte completo" << endl;
     cout << "6. Generar reporte de bajo stock" << endl;
     cout << "7. Encontrar el producto más caro" << endl;
-    cout << "8. Salir" << endl;
+    cout << "8. Encontrar el producto más barato" << endl;
+    cout << "9. Salir" << endl;
     cout << "\nOpción seleccionada: ";
 }
 
@@ -147,6 +148,27 @@ void encontrarMasCaro() {
     cout << "\nEl producto más caro es: " << nombres[indiceMayor] 
          << " con un precio de $" << precioMayor << endl;
 }
+
+void encontrarMasBarato() {
+    if(totalProductos == 0) {
+        cout << "\nNo hay productos en el inventario." << endl;
+        return;
+    }
+    
+    float precioMenor = precios[0];
+    int indiceMenor = 0;
+
+    for(int i = 1; i < totalProductos; i++) {
+        if(precios[i] < precioMenor) {
+            precioMenor = precios[i];
+            indiceMenor = i;
+        }
+    }
+
+    cout << "\nEl producto más barato es: " << nombres[indiceMenor] 
+         << " con un precio de $" << precioMenor << endl;
+}
+
 
 void actualizarInventario () {
     int codigoActualizar, nuevaCantidad;
@@ -290,6 +312,9 @@ int main() {
                 encontrarMasCaro();
                 break;
             case 8:
+                encontrarMasBarato();
+                break;
+            case 9:
                 guardarInventario();
                 cout << "Cerrando sesión.. " << endl;
                 return 0;
