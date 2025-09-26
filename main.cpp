@@ -1,5 +1,4 @@
 #include <iostream>
-<<<<<<< HEAD
 #include <string>
 #include <fstream>
 
@@ -326,9 +325,3 @@ int main() {
     
     return 0;
 }
-=======
-
-int main() {
-    return 0;
-}
->>>>>>> be995fffa4328fedfb3fcd32ecc55c966a89b06b
